@@ -258,7 +258,7 @@ def home():
 def register_page():
     return render_template('register.html')
 
-@app.route('/registersupervisor', methods=['POST'])
+@app.route('/registersupervisor', methods=['GET', 'POST'])
 def register():
 
     # Obtén los datos del formulario
@@ -1395,14 +1395,3 @@ if __name__ == '__main__':
     #app.register_error_handler(404, pagina_no_encontrada)
     app.run(host='0.0.0.0',debug=True, port=3000)
     debug=True
-
-# #lsof -i:PUERTO //para revisar todos los procesos que estan usando el puerto
-# #kill -9 PID //para matar el proceso que esta usando el puerto
-# source /home/ivonne/Documentos/GitHub/MemoriaTituloIvonne/venv/bin/activate
-# serie activa por grupos, asignar la serie a un grupo de estudiantes
-# Ruta donde debe quedar el archivo del alumno plantillaMaven/src/main/java/org/example/
-# Ruta donde debe quedar el archivo de los test del profesor plantillaMaven/src/test/java/org/example/
-
-# ssh ivonne@pa3p2.inf.udec.cl
-# mail5@udec.cl
-#gunicorn -w 2 -b 0.0.0.0:3000 main:app
