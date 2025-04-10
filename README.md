@@ -9,3 +9,5 @@ Then to start the project :
 `python .\main.py` 
 
 Then you need to connect to http://127.0.0.1:3000/registerSupervisor to create the first supervsor account.
+
+You can encounter an example of exercise for the platform here : https://github.com/GeoffreyHecht/FizzBuzzPasoAPaso
