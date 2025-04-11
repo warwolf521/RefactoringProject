@@ -1,4 +1,7 @@
 # CodeBending
+
+You need Java JRE > 21 installed and Apache ¿Maven in your computer.
+
 In your favorite virtual env :
 `pip install -r requirements.txt`
 
