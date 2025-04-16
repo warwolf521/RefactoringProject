@@ -14,3 +14,5 @@ Then to start the project :
 Then you need to connect to http://127.0.0.1:3000/registerSupervisor to create the first supervsor account.
 
 You can encounter an example of exercise for the platform here : https://github.com/GeoffreyHecht/FizzBuzzPasoAPaso
+
+Important: There seems to be a problem with path management under Windows, so I recommend using Linux (or correcting the problem).
