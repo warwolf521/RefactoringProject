@@ -21,6 +21,9 @@ import logging
 from logging.config import dictConfig
 from ansi2html import Ansi2HTMLConverter
 import json
+from login.login import login_bp
+
+from utility import procesar_archivo_csv, calcular_calificacion, verify_supervisor, verify_ayudante, verify_estudiante
 
 
 dictConfig({
@@ -61,7 +64,7 @@ app.config['SECRET_KEY'] = 'secret-key-goes-here'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'  # Nombre de la vista para iniciar sesión
+login_manager.login_view = 'login.l'  # Nombre de la vista para iniciar sesión
 
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=120)
 
@@ -79,97 +82,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename, allowed_extensions):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
-def procesar_archivo_csv(filename, curso_id):
-    # ----->>>Falta borrar los flash de depuracion :)<<<<------
-    # Procesa el archivo
-    with open(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'r') as f:
-        reader = csv.reader(f)
-        next(reader)  # Saltar la primera fila
-        for row in reader:
-            if len(row) != 5:
-                # Manejar el error, por ejemplo, omitiendo esta fila o mostrando un mensaje de advertencia
-                current_app.logger.warning(f"La fila no tiene el formato esperado: {row}")
-                continue  # Saltar esta fila y continuar con la próxima
-            
-            # Por cada fila, extraer los datos
-            matricula, apellidos, nombres, correo, carrera = row
-            password = generate_password_hash(matricula)  # Contraseña por defecto: hash de la matrícula
-            # Verificar si el estudiante ya existe en la base de datos:
-            estudiante_existente = Estudiante.query.filter_by(matricula=matricula).first()
-            
-            if estudiante_existente:
-                # El estudiante con el mismo correo ya existe
-                #flash(f'El estudiante con matrícula {matricula} ya está registrado en la base de datos.', 'warning')
-                # Revisar si el estudiante ya está asignado a curso_id
-                # Usando tabla de inscripciones
-                relacion_existente = db.session.query(inscripciones).filter_by(id_estudiante=estudiante_existente.id, id_curso=curso_id).first()
-                if relacion_existente:
-                    flash(f'El estudiante con matrícula {matricula} ya está inscrito en el curso {curso_id}.', 'warning')
-                    continue
-
-                try:
-                    nueva_inscripcion = inscripciones.insert().values(id_estudiante=estudiante_existente.id, id_curso=curso_id)
-                    db.session.execute(nueva_inscripcion)
-                    db.session.commit()
-                    flash(f'El estudiante con matrícula {matricula} ha sido inscrito en el curso.', 'success')
-                except IntegrityError as e:
-                    db.session.rollback()
-                    flash(f'Error al registrar en el curso {curso_id} al estudiante {matricula} .', 'warning')
-                    continue
-            
-            # Si el estudiantes no existe, se crea
-            elif not estudiante_existente:
-
-                estudiante = Estudiante(
-                matricula=matricula,
-                apellidos=apellidos,
-                nombres=nombres,
-                correo=correo,
-                password=password,
-                carrera=carrera)
-                # Crear el nuevo estudiante en la base de datos
-                try:
-                    db.session.add(estudiante)
-                    db.session.flush()  # Esto genera el id sin confirmar en la base de datos
-                    estudiante_id = estudiante.id  # Obtener el id del estudiante recién creado
-                    db.session.commit()
-                    flash(f'El estudiante con matrícula {matricula} ha sido registrado en la base de datos.', 'success')
-                except Exception as e:
-                    db.session.rollback()
-                    flash(f'Error al crear al registrar {nombres} {apellidos} .', 'warning')
-                    continue
-
-                # Si el estudiante se creó correctamente en la bd, se inscribe en el curso
-                try:
-                    nueva_inscripcion = inscripciones.insert().values(id_estudiante=estudiante_id, id_curso=curso_id)
-                    db.session.execute(nueva_inscripcion)
-                    db.session.commit()
-                    flash(f'El estudiante con matrícula {matricula} ha sido inscrito en el curso.', 'success')
-                except Exception as e:
-                    db.session.rollback()
-                    flash(f'Error al inscribir a {nombres} {apellidos} en el curso.', 'warning')
-                    continue
-
-def calcular_calificacion(total_puntos, puntos_obtenidos):
-    if total_puntos == 0:
-        return "No hay ejercicios asignados"  # O cualquier mensaje de error adecuado
-    else:
-        porcentaje = (puntos_obtenidos / total_puntos) * 100
-
-        if porcentaje >= 60:
-            # Calcular la calificación para el rango de 4 a 7
-            calificacion = 4 + (3 / 40) * (porcentaje - 60)
-        else:
-            # Calcular la calificación para el rango de 1 a 4
-            calificacion = 1 + (3 / 60) * porcentaje
-
-        calificacion = max(1, min(calificacion, 7))
-
-        # Redondear a dos decimales
-        calificacion = round(calificacion, 2)
-
-        return calificacion
-
+app.register_blueprint(login_bp)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -182,73 +95,11 @@ def load_user(user_id):
 
     return user
 
-# Verifica que el usuario logueado es un Supervisor
-def verify_supervisor(supervisor_id):
-    
-    if not isinstance(current_user, Supervisor):
-        flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return False
-
-    # Asegura que el Supervisor está tratando de acceder a su propio dashboard
-    if current_user.id != supervisor_id:
-        flash('No tienes permiso para acceder a este dashboard.', 'danger')
-        return False
-
-    return True
-
-# Verifica que el usuario logueado es un Estudiante
-def verify_estudiante(estudiante_id):
-    
-    if not isinstance(current_user, Estudiante):
-        flash('No tienes permiso para acceder a este dashboard. Debes ser un Estudiante.', 'danger')
-        return False
-    # Asegura que el Estudiante está tratando de acceder a su propio dashboard
-    if current_user.id != estudiante_id:
-        flash('No tienes permiso para acceder a este dashboard.', 'danger')
-        return False
-    return True
-
-def verify_ayudante(supervisor_id):
-
-    if not isinstance(current_user, Supervisor):
-        flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return False
-    if current_user.id != supervisor_id:
-        flash('No tienes permiso para acceder a este dashboard.', 'danger')
-        return False
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        correo = request.form['correo']
-        password = request.form['password']
-        
-        # Primero verifica si las credenciales son de un estudiante o un supervisor.
-        estudiante = Estudiante.query.filter_by(correo=correo).first()
-        supervisor = Supervisor.query.filter_by(correo=correo).first()
-
-        # Si es estudiante y las credenciales son correctas.
-        if estudiante and check_password_hash(estudiante.password, password):
-            login_user(estudiante)
-            flash('Has iniciado sesión exitosamente', 'success')
-            return redirect(url_for('dashEstudiante', estudiante_id=estudiante.id))
-        
-        # Si es supervisor y las credenciales son correctas.
-        elif supervisor and check_password_hash(supervisor.password, password):
-            login_user(supervisor)
-            flash('Has iniciado sesión exitosamente', 'success')
-            return redirect(url_for('dashDocente', supervisor_id=supervisor.id))
-        
-        # Si las credenciales no coinciden con ningún usuario.
-        flash('Credenciales inválidas', 'danger')
-    
-    return render_template('inicio.html')
-
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('login.login'))
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -290,14 +141,14 @@ def register():
     db.session.commit()
 
     flash('Supervisor registrado exitosamente.', 'success')
-    return redirect(url_for('login'))
+    return redirect(url_for('login.login'))
 
 @app.route('/dashDocente/<int:supervisor_id>', methods=['GET', 'POST'])
 @login_required
 def dashDocente(supervisor_id):
     # Usa la función de verificación
     if not verify_supervisor(supervisor_id):
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
     
     series = Serie.query.all()
     cursos = Curso.query.all()
@@ -358,7 +209,7 @@ def dashDocente(supervisor_id):
 @login_required
 def cuentaDocente(supervisor_id):
     if not verify_supervisor(supervisor_id):
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
     
     supervisor = Supervisor.query.get(supervisor_id)
 
@@ -387,7 +238,7 @@ def cuentaDocente(supervisor_id):
 @login_required
 def agregarSerie(supervisor_id):
     if not verify_supervisor(supervisor_id):
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
 
     if request.method == 'POST':
         nombreSerie= request.form.get('nombreSerie')
@@ -416,7 +267,7 @@ def agregarSerie(supervisor_id):
 @login_required
 def agregarEjercicio(supervisor_id):
     if not verify_supervisor(supervisor_id):
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
 
     series = Serie.query.all()
     filepath_ejercicio = None
@@ -492,7 +343,7 @@ def agregarEjercicio(supervisor_id):
 def detallesSeries(supervisor_id, serie_id):
     if not verify_supervisor(supervisor_id):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
 
     serie = Serie.query.get(serie_id)
     ejercicios = Ejercicio.query.filter_by(id_serie=serie_id).all()
@@ -561,7 +412,7 @@ def detallesSeries(supervisor_id, serie_id):
 def detallesEjercicio(supervisor_id, serie_id, ejercicio_id):
     if not verify_supervisor(supervisor_id):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
     ejercicio = Ejercicio.query.get(ejercicio_id)
     serie= Serie.query.get(serie_id)
     if ejercicio and ejercicio.enunciado:
@@ -651,7 +502,7 @@ def registrarEstudiantes(supervisor_id):
     # Usa la función de verificación
     if not verify_supervisor(supervisor_id):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
 
     cursos = Curso.query.all()
 
@@ -686,7 +537,7 @@ def registrarEstudiantes(supervisor_id):
                     listaClases.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                     # Procesa el archivo y agrega a la bd
-                    procesar_archivo_csv(filename, id_curso)
+                    procesar_archivo_csv(filename, id_curso, app, db)
 
                     return redirect(url_for('dashDocente', supervisor_id=supervisor_id))
         except Exception as e:
@@ -800,7 +651,7 @@ def detallesCurso(supervisor_id, curso_id):
 def asignarGrupos(supervisor_id, curso_id):
     if not verify_supervisor(supervisor_id):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
 
     cursos = Curso.query.all()
 
@@ -867,7 +718,7 @@ def asignarGrupos(supervisor_id, curso_id):
 def detallesGrupo(supervisor_id, curso_id, grupo_id):
     if not verify_supervisor(supervisor_id):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
     grupo=Grupo.query.get(grupo_id)
     curso=Curso.query.get(curso_id)
     estudiantes = Estudiante.query.filter(Estudiante.cursos.any(id=curso_id)).all()
@@ -939,7 +790,7 @@ def eliminarEstudiante(supervisor_id, curso_id, grupo_id):
 def detallesEstudiante(supervisor_id, curso_id, estudiante_id):
     if not verify_supervisor(supervisor_id):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
     
     estudiante = Estudiante.query.get(estudiante_id)
     cursos = []
@@ -998,7 +849,7 @@ def detallesEstudiante(supervisor_id, curso_id, estudiante_id):
 def examinarEjercicio(supervisor_id, curso_id, estudiante_id, ejercicio_id):
     if not verify_supervisor(supervisor_id):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
     estudiante = Estudiante.query.get(estudiante_id)
     ejercicio = Ejercicio.query.get(ejercicio_id)
     ejercicio_asignado= Ejercicio_asignado.query.filter_by(id_estudiante=estudiante_id, id_ejercicio=ejercicio_id).first()
@@ -1036,7 +887,7 @@ def progresoCurso(supervisor_id, curso_id):
 
     if not verify_supervisor(supervisor_id):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
 
     curso = Curso.query.get(curso_id)
 
@@ -1110,7 +961,7 @@ def progresoCurso(supervisor_id, curso_id):
 def dashEstudiante(estudiante_id):
 
     if not verify_estudiante(estudiante_id):
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
 
     estudiante = db.session.get(Estudiante, int(estudiante_id))
 
@@ -1175,7 +1026,7 @@ def dashEstudiante(estudiante_id):
 def detallesSeriesEstudiantes(estudiante_id, serie_id):
 
     if not verify_estudiante(estudiante_id):
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
     serie = db.session.get(Serie, serie_id)
     ejercicios = Ejercicio.query.filter_by(id_serie=serie_id).all()
     ejercicios_asignados = (
@@ -1198,7 +1049,7 @@ def detallesSeriesEstudiantes(estudiante_id, serie_id):
 @login_required
 def detallesEjerciciosEstudiantes(estudiante_id, serie_id, ejercicio_id):
     if not verify_estudiante(estudiante_id):
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
 
     serie = Serie.query.get(serie_id)
     ejercicio = Ejercicio.query.get(ejercicio_id)
@@ -1358,7 +1209,7 @@ def detallesEjerciciosEstudiantes(estudiante_id, serie_id, ejercicio_id):
 @login_required
 def cuentaEstudiante(estudiante_id):
     if not verify_estudiante(estudiante_id):
-        return redirect(url_for('login'))
+        return redirect(url_for('login.login'))
     
     estudiante = Estudiante.query.get(estudiante_id)
 

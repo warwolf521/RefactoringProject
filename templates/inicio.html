@@ -16,7 +16,7 @@ Inicio
 <div class="row justify-content-center">
   <div class="col-5 p-4 rounded shadow custom-login-box">
     <h2 class="text-secondary">Iniciar sesión</h2>
-    <form method="POST" action="{{ url_for('login') }}">
+    <form method="POST" action="{{ url_for('login.login') }}">
       <div class="form-group">
         <label for="username" class="text-dark">Correo electrónico</label>
         <input type="email" class="form-control" id="correo" name="correo" placeholder="Ingresa tu correo">
