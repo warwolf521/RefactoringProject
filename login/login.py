@@ -1,10 +1,11 @@
 from flask import Flask,Blueprint, request,flash,redirect,url_for,render_template
-from flask_login import login_user 
+from flask_login import login_user, logout_user,login_required
 from basedatos.modelos import Supervisor, Estudiante
 from werkzeug.security import check_password_hash
 login_bp = Blueprint('login',__name__)
 
 @login_bp.route('/login', methods=['GET', 'POST'])
+#funcion login
 def login():
     if request.method == 'POST':
         correo = request.form['correo']
@@ -30,3 +31,10 @@ def login():
         flash('Credenciales inválidas', 'danger')
     
     return render_template('inicio.html')
+
+
+@login_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login.login'))

@@ -133,3 +133,7 @@ def verify_ayudante(supervisor_id):
     if current_user.id != supervisor_id:
         flash('No tienes permiso para acceder a este dashboard.', 'danger')
         return False
+
+# Se define que tipo de arhivos se pueden recibir
+def allowed_file(filename, allowed_extensions):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
