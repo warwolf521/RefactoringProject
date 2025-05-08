@@ -436,9 +436,10 @@ def registrarEstudiantes(supervisor_id):
                 db.session.add(nuevo_curso)
                 db.session.commit()
                 flash('Has creado exitosamente un nuevo Curso', 'success')
-                return redirect(url_for('registrarEstudiantes', supervisor_id=supervisor_id))
+                return redirect(url_for('supervisor.registrarEstudiantes', supervisor_id=supervisor_id))
             
             elif accion == 'registrarEstudiantes':
+                from main import app
                 id_curso=request.form['curso']
                 listaClases = request.files['listaClases']
                 if listaClases and allowed_file(listaClases.filename, ALLOWED_EXTENSIONS):
@@ -453,7 +454,7 @@ def registrarEstudiantes(supervisor_id):
             current_app.logger.error(f'Ocurrió un error al registrar los estudiantes: {str(e)}')
             db.session.rollback()
             flash('Error al registrar los estudiantes', 'danger')
-            return redirect(url_for('registrarEstudiantes', supervisor_id=supervisor_id))
+            return redirect(url_for('supervisor.registrarEstudiantes', supervisor_id=supervisor_id))
     return render_template('registrarEstudiantes.html', supervisor_id=supervisor_id)
 
 @supervisor_bp.route('/dashDocente/<int:supervisor_id>/detalleCurso/<int:curso_id>', methods=['GET','POST'])

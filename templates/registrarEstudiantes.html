@@ -8,7 +8,7 @@ Registro de Estudiantes
 
 <div class="container mt-5">
     <br>
-    <a href="{{ url_for('dashDocente', supervisor_id=supervisor_id) }}" class="btn btn-secondary">Volver</a>
+    <a href="{{ url_for('supervisor.dashDocente', supervisor_id=supervisor_id) }}" class="btn btn-secondary">Volver</a>
 </div>
 
 <div class="container mt-5">
@@ -19,7 +19,7 @@ Registro de Estudiantes
 
 <div class="container mt-5">
     <p>Para registrar estudiantes, carga un archivo .csv con la lista de clases. Si no has creado un Curso o quieres crear uno nuevo, llena el formulario:</p>
-    <form method="post" action="{{ url_for('registrarEstudiantes', supervisor_id=supervisor_id) }}">
+    <form method="post" action="{{ url_for('supervisor.registrarEstudiantes', supervisor_id=supervisor_id) }}">
         <input type="hidden" name="accion" value="crearCurso"> <!-- Agrega un campo oculto para identificar el formulario -->
         <div class="form-group">
             <label for="nombreCurso">Nombre del Curso</label>
@@ -45,7 +45,7 @@ Registro de Estudiantes
 
 </div>
 <div class="container mt-5">
-    <form method="post" action="{{ url_for('registrarEstudiantes', supervisor_id=supervisor_id) }}" enctype="multipart/form-data">
+    <form method="post" action="{{ url_for('supervisor.registrarEstudiantes', supervisor_id=supervisor_id) }}" enctype="multipart/form-data">
         <input type="hidden" name="accion" value="registrarEstudiantes"> <!-- Agrega un campo oculto para identificar el formulario -->
         <div class="form-group">
             <label for="curso">Curso:</label>

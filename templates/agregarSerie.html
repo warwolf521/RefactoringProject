@@ -8,7 +8,7 @@ Agregar Serie
 
 <div class="container mt-5">
     <br>
-    <a href="{{ url_for('dashDocente', supervisor_id=supervisor_id) }}" class="btn btn-secondary">Volver</a>
+    <a href="{{ url_for('supervisor.dashDocente', supervisor_id=supervisor_id) }}" class="btn btn-secondary">Volver</a>
 </div>
 
 <div class="container mt-5">
@@ -19,7 +19,7 @@ Agregar Serie
 
 <div class="container mt-5">
     
-    <form method="post" action="{{ url_for('agregarSerie', supervisor_id=supervisor_id) }}">
+    <form method="post" action="{{ url_for('supervisor.agregarSerie', supervisor_id=supervisor_id) }}">
         <div class="form-group">
             <label for="nombreSerie">Nombre de la serie</label>
             <input type="text" class="form-control" id="nombreSerie" name="nombreSerie" placeholder="Ingresa el nombre de la serie" required>

@@ -7,7 +7,7 @@
 {% block content %}
 <div class="container mt-5">
   <br>
-  <a href="{{ url_for('dashDocente', supervisor_id=supervisor_id) }}" class="btn btn-secondary">Volver</a>
+  <a href="{{ url_for('supervisor.dashDocente', supervisor_id=supervisor_id) }}" class="btn btn-secondary">Volver</a>
 </div>
 
 <div class="container mt-5">
@@ -21,7 +21,7 @@
     <div class="col-12 mb-3">
       <div class="row">
         <div class="col-md-3 mb-3">
-          <form method="post" action="{{ url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso.id) }}">
+          <form method="post" action="{{ url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso.id) }}">
 
           {% if curso.activa %}
               <button type="submit" name="activar_inactivar" value="desactivar" class="btn btn-success btn-block">Activo</button>
@@ -31,10 +31,10 @@
         </form>
       </div>
         <div class="col-md-3 mb-3">
-          <a href="{{ url_for('asignarGrupos', supervisor_id=supervisor_id, curso_id=curso.id) }}" class="btn btn-secondary btn-block">Asignar nuevo grupo</a>
+          <a href="{{ url_for('supervisor.asignarGrupos', supervisor_id=supervisor_id, curso_id=curso.id) }}" class="btn btn-secondary btn-block">Asignar nuevo grupo</a>
         </div>
         <div class="col-md-3 mb-3">
-          <a href="{{ url_for('progresoCurso', supervisor_id=supervisor_id, curso_id=curso.id)}}" class="btn btn-secondary btn-block">Ver progreso del curso</a>
+          <a href="{{ url_for('supervisor.progresoCurso', supervisor_id=supervisor_id, curso_id=curso.id)}}" class="btn btn-secondary btn-block">Ver progreso del curso</a>
         </div>
         <div class="col-md-3 mb-3">
           <button type="button" name="eliminar" id="eliminarBtn" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#eliminarModal">Eliminar <svg fill="#dc3545" width="25px" height="25px" viewBox="0 0 24 24" version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg"><path d="M12 4c-4.419 0-8 3.582-8 8s3.581 8 8 8 8-3.582 8-8-3.581-8-8-8zm3.707 10.293c.391.391.391 1.023 0 1.414-.195.195-.451.293-.707.293s-.512-.098-.707-.293l-2.293-2.293-2.293 2.293c-.195.195-.451.293-.707.293s-.512-.098-.707-.293c-.391-.391-.391-1.023 0-1.414l2.293-2.293-2.293-2.293c-.391-.391-.391-1.023 0-1.414s1.023-.391 1.414 0l2.293 2.293 2.293-2.293c.391-.391 1.023-.391 1.414 0s.391 1.023 0 1.414l-2.293 2.293 2.293 2.293z"/></svg></button>
@@ -74,7 +74,7 @@
           <p class="card-text">No hay grupos</p>
           {% endif %}
           {% for grupo in grupos %}
-          <p class="card-text"><a class="card-text" href="{{url_for('detallesGrupo', supervisor_id=supervisor_id, curso_id=curso.id, grupo_id=grupo.id)}}"> {{grupo.nombre}}</a></p>
+          <p class="card-text"><a class="card-text" href="{{url_for('supervisor.detallesGrupo', supervisor_id=supervisor_id, curso_id=curso.id, grupo_id=grupo.id)}}"> {{grupo.nombre}}</a></p>
           {% endfor %}
         </div>
       </div>
@@ -84,7 +84,7 @@
           <h5>Asignar serie a grupo</h5>
         </div>
         <div class="card-body">
-          <form method="post" action="{{ url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso.id) }}" name="asignarSerie" >
+          <form method="post" action="{{ url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso.id) }}" name="asignarSerie" >
 
             <div class="form-group mr-2">
                 <label for="series" class="mr-2">Series:</label>
@@ -127,7 +127,7 @@
           {% endif %}
           {% for serie in series_asignadas %}
             <p class="card-text">
-              <a class="card-text" href="{{ url_for('detallesSeries', supervisor_id=supervisor_id, serie_id=serie.id) }}">
+              <a class="card-text" href="{{ url_for('supervisor.detallesSeries', supervisor_id=supervisor_id, serie_id=serie.id) }}">
                 {{ serie.nombre }}
               </a>
             </p>
@@ -157,7 +157,7 @@
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
               <!-- Asegúrate de que el nombre del botón sea "eliminar" -->
-              <form id="eliminarForm" action="{{ url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso.id) }}" method="post" onsubmit="event.preventDefault(); confirmarEliminacion();">
+              <form id="eliminarForm" action="{{ url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso.id) }}" method="post" onsubmit="event.preventDefault(); confirmarEliminacion();">
                 <input type="hidden" name="eliminar" value="true">
                 <button type="submit" class="btn btn-danger">Eliminar</button>
             </form>            

@@ -18,7 +18,7 @@ def login():
         if estudiante and check_password_hash(estudiante.password, password):
             login_user(estudiante)
             flash('Has iniciado sesión exitosamente', 'success')
-            return redirect(url_for('dashEstudiante', estudiante_id=estudiante.id))
+            return redirect(url_for('estudiante.dashEstudiante', estudiante_id=estudiante.id))
 
 
         # Si no, verifica si las credenciales son de un supervisor.
@@ -28,7 +28,7 @@ def login():
         if supervisor and check_password_hash(supervisor.password, password):
             login_user(supervisor)
             flash('Has iniciado sesión exitosamente', 'success')
-            return redirect(url_for('dashDocente', supervisor_id=supervisor.id))
+            return redirect(url_for('supervisor.dashDocente', supervisor_id=supervisor.id))
             
 
         # Si las credenciales no coinciden con ningún usuario.

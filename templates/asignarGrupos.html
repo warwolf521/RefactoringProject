@@ -9,7 +9,7 @@ Asignar Grupos
 
 <div class="container mt-5">
     <br>
-    <a href="{{ url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso_seleccionado) }}" class="btn btn-secondary">Volver</a>
+    <a href="{{ url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso_seleccionado) }}" class="btn btn-secondary">Volver</a>
 </div>
 
 <div class="container mt-5">
@@ -19,7 +19,7 @@ Asignar Grupos
 </div>
 
 <div class="container mt-5">
-    <form method="post" action="{{ url_for('asignarGrupos', supervisor_id=supervisor_id, curso_id=curso_seleccionado) }}" id="cursoForm">
+    <form method="post" action="{{ url_for('supervisor.asignarGrupos', supervisor_id=supervisor_id, curso_id=curso_seleccionado) }}" id="cursoForm">
         <input type="hidden" name="accion" value="seleccionarCurso">
         <div class="form-group">
             <label for="curso">Selecciona un curso</label>
@@ -43,7 +43,7 @@ Asignar Grupos
             </tr>
         </thead>
         <tbody>
-            <form method="post" action="{{url_for('asignarGrupos', supervisor_id=supervisor_id, curso_id=curso_seleccionado)}}" id="estudiantesForm">
+            <form method="post" action="{{url_for('supervisor.asignarGrupos', supervisor_id=supervisor_id, curso_id=curso_seleccionado)}}" id="estudiantesForm">
                 <input type="hidden" name ='accion' value='seleccionarEstudiantes'>
                 <input type="hidden" name="curso_seleccionado" value="{{ curso_seleccionado }}"> <!-- Agrega un campo oculto para el ID del curso -->
                 {% for estudiante in estudiantes_curso %}

@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <a href="{{ url_for('dashDocente', supervisor_id=supervisor_id) }}" class="btn btn-secondary">Volver</a>
+    <a href="{{ url_for('supervisor.dashDocente', supervisor_id=supervisor_id) }}" class="btn btn-secondary">Volver</a>
 </div>
 
 <div class="container mt-5">
@@ -17,7 +17,7 @@
 
     <h4>El nombre no puede contener más de 50 caracteres.</h4>
     
-        <form method="post" action="{{ url_for('agregarEjercicio', supervisor_id=supervisor_id) }}" enctype="multipart/form-data">
+        <form method="post" action="{{ url_for('supervisor.agregarEjercicio', supervisor_id=supervisor_id) }}" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="nombreEjercicio" class="font-weight-bold" >Nombre del Ejercicio: </label>
                 <input type="text" class="form-control" id="nombreEjercicio" name="nombreEjercicio" placeholder="Ingresa el nombre del ejercicio" required>

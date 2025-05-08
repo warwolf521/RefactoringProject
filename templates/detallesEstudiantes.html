@@ -7,7 +7,7 @@
 {% block content %}
 <div class="container mt-5">
     <br>
-    <a href="{{url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso_actual.id)}}" class="btn btn-secondary">Volver</a>
+    <a href="{{url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso_actual.id)}}" class="btn btn-secondary">Volver</a>
 </div>
 
 <div class="container mt-5">
@@ -83,7 +83,7 @@
                             <td>
                                 {% for ejercicio_asignado in ejercicios_asignados %}
                                     {% if ejercicio_asignado.id_ejercicio == ejercicio.id %}
-                                        <a href="{{ url_for('examinarEjercicio', supervisor_id=supervisor_id,curso_id=curso_actual.id, estudiante_id=estudiante.id, ejercicio_id=ejercicio.id) }}">{{ ejercicio.nombre }}</a>
+                                        <a href="{{ url_for('supervisor.examinarEjercicio', supervisor_id=supervisor_id,curso_id=curso_actual.id, estudiante_id=estudiante.id, ejercicio_id=ejercicio.id) }}">{{ ejercicio.nombre }}</a>
                                     {% endif %}
                                 {% endfor %}
                             </td>

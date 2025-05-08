@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container mt-5">
     <br>
-    <a href="{{ url_for('detallesSeries',supervisor_id=supervisor_id,serie_id=ejercicio.id_serie) }}" class="btn btn-secondary">Volver</a>
+    <a href="{{ url_for('supervisor.detallesSeries',supervisor_id=supervisor_id,serie_id=ejercicio.id_serie) }}" class="btn btn-secondary">Volver</a>
 </div>
 
 
@@ -62,7 +62,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 <!-- Asegúrate de que el nombre del botón sea "eliminar" -->
-                <form id="eliminarForm" action="{{ url_for('detallesEjercicio', supervisor_id=supervisor_id, serie_id=serie.id, ejercicio_id=ejercicio.id) }}" >
+                <form id="eliminarForm" action="{{ url_for('supervisor.detallesEjercicio', supervisor_id=supervisor_id, serie_id=serie.id, ejercicio_id=ejercicio.id) }}" >
                   <input type="hidden" name="eliminar" value="true">
                   <button type="submit" class="btn btn-danger">Eliminar</button>
               </form>            
@@ -80,7 +80,7 @@
             </div>
 
             <div class="modal-body">
-                <form id="editar" method="post" enctype="multipart/form-data" action="{{url_for('detallesEjercicio', supervisor_id=supervisor_id, serie_id=serie.id, ejercicio_id=ejercicio.id)}}">
+                <form id="editar" method="post" enctype="multipart/form-data" action="{{url_for('supervisor.detallesEjercicio', supervisor_id=supervisor_id, serie_id=serie.id, ejercicio_id=ejercicio.id)}}">
                     <div class="form-group">
                         <label for="nuevo_nombre">Nuevo Nombre:</label>
                         <input type="text" name="nuevo_nombre" class="form-control">

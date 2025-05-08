@@ -65,7 +65,7 @@ app.config['SECRET_KEY'] = 'secret-key-goes-here'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login.l'  # Nombre de la vista para iniciar sesión
+login_manager.login_view = 'login.login'  # Nombre de la vista para iniciar sesión
 
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=120)
 
@@ -81,9 +81,6 @@ UPLOAD_FOLDER = os.path.join(current_directory, "uploads")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Blueprints rutas
 
-app.register_blueprint(login_bp)
-app.register_blueprint(supervisor_bp)
-
 @login_manager.user_loader
 def load_user(user_id):
     if user_id.startswith("e"):
@@ -95,12 +92,12 @@ def load_user(user_id):
 
     return user
 
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
     return render_template('inicio.html')
 
-
+app.register_blueprint(supervisor_bp)
+app.register_blueprint(login_bp)
 
 #Funcion para ejecutar el script 404
 def pagina_no_encontrada(error):
