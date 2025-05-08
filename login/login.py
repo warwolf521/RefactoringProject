@@ -13,20 +13,24 @@ def login():
         
         # Primero verifica si las credenciales son de un estudiante o un supervisor.
         estudiante = Estudiante.query.filter_by(correo=correo).first()
-        supervisor = Supervisor.query.filter_by(correo=correo).first()
 
         # Si es estudiante y las credenciales son correctas.
         if estudiante and check_password_hash(estudiante.password, password):
             login_user(estudiante)
             flash('Has iniciado sesión exitosamente', 'success')
             return redirect(url_for('dashEstudiante', estudiante_id=estudiante.id))
+
+
+        # Si no, verifica si las credenciales son de un supervisor.
+        supervisor = Supervisor.query.filter_by(correo=correo).first()
         
         # Si es supervisor y las credenciales son correctas.
-        elif supervisor and check_password_hash(supervisor.password, password):
+        if supervisor and check_password_hash(supervisor.password, password):
             login_user(supervisor)
             flash('Has iniciado sesión exitosamente', 'success')
             return redirect(url_for('dashDocente', supervisor_id=supervisor.id))
-        
+            
+
         # Si las credenciales no coinciden con ningún usuario.
         flash('Credenciales inválidas', 'danger')
     
