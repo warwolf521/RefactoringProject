@@ -29,7 +29,7 @@ def register():
 
     if not nombres or not apellidos or not correo or not password:
         flash('Todos los campos son requeridos.', 'danger')
-        return render_template('registersupervisor.html')
+        return render_template('register.html')
     
     # Verifica si ya existe un supervisor con ese correo
     supervisor = Supervisor.query.filter_by(correo=correo).first()
