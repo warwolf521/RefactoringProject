@@ -23,6 +23,7 @@ from ansi2html import Ansi2HTMLConverter
 import json
 from login.login import login_bp
 from supervisor.supervisor import supervisor_bp
+from estudiante.estudiante import estudiante_bp
 
 from utility import procesar_archivo_csv, calcular_calificacion, verify_supervisor, verify_ayudante, verify_estudiante
 
@@ -97,6 +98,7 @@ def home():
     return render_template('inicio.html')
 
 app.register_blueprint(supervisor_bp)
+app.register_blueprint(estudiante_bp)
 app.register_blueprint(login_bp)
 
 #Funcion para ejecutar el script 404
