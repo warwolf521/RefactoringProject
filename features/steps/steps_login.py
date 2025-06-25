@@ -15,7 +15,20 @@ def step_impl(context, correo, password):
     response = requests.post(url, data=data, allow_redirects=True)
     context.response = response
 
-@then('debería ser redirigido al dashboard del usuario')
+@then('debería ser redirigido al dashboard del "{rol}"')
+def step_impl(context, rol):
+    final_url = context.response.url
+    if rol == 'estudiante':
+        assert 'dashEstudiante' in final_url, \
+            f"Esperaba ser redirigido al dashboard del estudiante, pero estoy en: {final_url}"
+    elif rol == 'supervisor':
+        assert 'dashDocente' in final_url, \
+            f"Esperaba ser redirigido al dashboard del supervisor, pero estoy en: {final_url}"
+    else:
+        raise ValueError(f"Rol desconocido: {rol}")
+    
+@then('debería permanecer en la página de login')
 def step_impl(context):
     final_url = context.response.url
-    assert '/dashDocente' in final_url or '/dashEstudiante' in final_url
+    assert '/login' in final_url or final_url.endswith('/'), \
+        f"Esperaba quedarme en login, pero estoy en: {final_url}"
