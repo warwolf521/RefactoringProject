@@ -13,6 +13,12 @@ def step_impl(context, nombre, apellido, correo, contrasena):
     url = urljoin(context.base_url, '/registersupervisor')
     if nombre == "<vacio>":
         nombre = ""
+    if apellido == "<vacio>":
+        apellido = ""
+    if correo == "<vacio>":
+        correo = ""
+    if contrasena == "<vacio>":
+        contrasena = ""
     data = {
         'nombres': nombre,
         'apellidos': apellido,
