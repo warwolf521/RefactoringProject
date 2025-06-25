@@ -17,13 +17,13 @@ You can encounter an example of exercise for the platform here : https://github.
 
 Important: There seems to be a problem with path management under Windows, so I recommend using Linux (or correcting the problem).
 
-## 📋 Escenarios de prueba implementados (Behave)
+# Escenarios de prueba implementados (Behave)
 
 A continuación se describen los escenarios implementados con Behave para validar el correcto funcionamiento del registro y login de supervisores. Cada escenario está alineado con historias de usuario reales y contempla tanto casos positivos como negativos.
 
 ---
 
-### ✅ `features/register.feature`
+### `feature: Registro (exitoso)`
 
 **Escenario:** Registro exitoso de un supervisor  
 **Descripción:**  
@@ -34,7 +34,7 @@ El usuario es redirigido a la página de login (`/login`) luego de completar el 
 
 ---
 
-### ❌ `features/register_error.feature`
+###  `feature: Registro (mal formateado)`
 
 **Escenario:** Registro fallido con datos mal formateados o incompletos  
 **Descripción:**  
@@ -45,7 +45,7 @@ El usuario permanece en la misma página (`/registersupervisor`) y se muestra un
 
 ---
 
-### 🔐 `features/loginSupervisor.feature`
+###  `feature: login`
 
 **Escenario:** Inicio de sesión del supervisor  
 **Descripción:**  
@@ -57,7 +57,7 @@ Este escenario comprueba que el supervisor pueda iniciar sesión con sus credenc
 
 ---
 
-### 🌐 Configuración base
+### Configuración base
 
 **Archivo:** `environment.py`  
 Define la URL base donde se ejecuta la aplicación para los tests:
