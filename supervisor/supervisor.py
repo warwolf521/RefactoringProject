@@ -232,7 +232,7 @@ def agregarEjercicio(supervisor_id):
 
             db.session.commit()
             flash('Ejercicio agregado con éxito', 'success')
-            return redirect(url_for('agregarEjercicio', supervisor_id=supervisor_id))
+            return redirect(url_for('supervisor.agregarEjercicio', supervisor_id=supervisor_id))
 
         except Exception as e:
             current_app.logger.error(f'Ocurrió un error al agregar el ejercicio: {str(e)}')
@@ -242,7 +242,7 @@ def agregarEjercicio(supervisor_id):
             if rutaEnunciadoEjercicios is not None and os.path.exists(rutaEnunciadoEjercicios):
                 shutil.rmtree(rutaEnunciadoEjercicios)
             db.session.rollback()
-            return redirect(url_for('agregarEjercicio', supervisor_id=supervisor_id, series=series))
+            return redirect(url_for('supervisor.agregarEjercicio', supervisor_id=supervisor_id, series=series))
 
     return render_template('agregarEjercicio.html', supervisor_id=supervisor_id, series=series)
 
@@ -268,7 +268,7 @@ def detallesSeries(supervisor_id, serie_id):
         if 'activar_desactivar' in request.form:
             serie.activa = not serie.activa
             db.session.commit()
-            return redirect(url_for('detallesSeries', supervisor_id=supervisor_id, serie_id=serie_id))
+            return redirect(url_for('supervisor.detallesSeries', supervisor_id=supervisor_id, serie_id=serie_id))
         elif 'eliminar' in request.form:
             try:
                 current_app.logger.info(f'Eliminando la serie {serie.nombre}...')
@@ -292,13 +292,13 @@ def detallesSeries(supervisor_id, serie_id):
                 shutil.rmtree(rutaEnunciadoSerie)
                 # Redireccionar y mostrar un mensaje de éxito
                 flash('Serie eliminada correctamente.', 'success')
-                return redirect(url_for('dashDocente', supervisor_id=supervisor_id))
+                return redirect(url_for('supervisor.dashDocente', supervisor_id=supervisor_id))
             except Exception as e:
                 # Manejar errores y realizar rollback en caso de error
                 current_app.logger.error(f'Ocurrió un error al eliminar la serie: {str(e)}')
                 db.session.rollback()
                 flash('Ocurrió un error al eliminar la serie.', 'danger')
-                return redirect(url_for('detallesSeries', supervisor_id=supervisor_id, serie_id=serie_id))
+                return redirect(url_for('supervisor.detallesSeries', supervisor_id=supervisor_id, serie_id=serie_id))
 
         elif 'editar' in request.form:
             try:
@@ -307,13 +307,13 @@ def detallesSeries(supervisor_id, serie_id):
                 serie.nombre = request.form.get('nuevo_nombre')
                 db.session.commit()
                 current_app.logger.info(f'Serie editada correctamente.')
-                return redirect(url_for('detallesSeries', supervisor_id=supervisor_id, serie_id=serie_id))
+                return redirect(url_for('supervisor.detallesSeries', supervisor_id=supervisor_id, serie_id=serie_id))
             except Exception as e:
                 current_app.logger.danger(f'Ocurrió un error al editar la serie: {str(e)}')
                 db.session.rollback()
-                return redirect(url_for('detallesSeries', supervisor_id=supervisor_id, serie_id=serie_id))
+                return redirect(url_for('supervisor.detallesSeries', supervisor_id=supervisor_id, serie_id=serie_id))
     if serie is None:
-        return redirect(url_for('dashDocente', supervisor_id=supervisor_id))
+        return redirect(url_for('supervisor.dashDocente', supervisor_id=supervisor_id))
     return render_template('detallesSerie.html', serie=serie, ejercicios=ejercicios, supervisor_id=supervisor_id, grupos_asociados=grupos_asociados)
 
 @supervisor_bp.route('/dashDocente/<int:supervisor_id>/serie/<int:serie_id>/ejercicio/<int:ejercicio_id>', methods=['GET','POST'])
@@ -398,10 +398,10 @@ def detallesEjercicio(supervisor_id, serie_id, ejercicio_id):
                 current_app.logger.error(f'Ocurrió un error al eliminar el ejercicio: {str(e)}')
                 db.session.rollback()
                 flash('Error al eliminar el ejercicio', 'danger')
-                return redirect(url_for('detallesSerie', supervisor_id=supervisor_id, serie_id=serie_id))
+                return redirect(url_for('supervisor.detallesSerie', supervisor_id=supervisor_id, serie_id=serie_id))
             db.session.commit()
             
-            return redirect(url_for('detallesEjercicio', supervisor_id=supervisor_id,serie_id=serie_id, ejercicio_id=ejercicio_id))
+            return redirect(url_for('supervisor.detallesEjercicio', supervisor_id=supervisor_id,serie_id=serie_id, ejercicio_id=ejercicio_id))
     return render_template('detallesEjercicios.html', ejercicio=ejercicio, supervisor_id=supervisor_id, enunciado=enunciado_html, serie=serie)
 
 @supervisor_bp.route('/dashDocente/<int:supervisor_id>/registrarEstudiante', methods=['GET', 'POST'])
@@ -449,7 +449,7 @@ def registrarEstudiantes(supervisor_id):
                     # Procesa el archivo y agrega a la bd
                     procesar_archivo_csv(filename, id_curso, app, db)
 
-                    return redirect(url_for('dashDocente', supervisor_id=supervisor_id))
+                    return redirect(url_for('supervisor.dashDocente', supervisor_id=supervisor_id))
         except Exception as e:
             current_app.logger.error(f'Ocurrió un error al registrar los estudiantes: {str(e)}')
             db.session.rollback()
@@ -476,7 +476,7 @@ def detallesCurso(supervisor_id, curso_id):
             elif accion == 'desactivar':
                 curso_actual.activa = False
             db.session.commit()
-            return redirect(url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
+            return redirect(url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
         elif 'submit_action' in request.form and request.form['submit_action'] == 'asignarSerie':
             current_app.logger.info(f'Asignando serie a grupo...')
             serie_seleccionada= request.form.get('series')
@@ -488,12 +488,12 @@ def detallesCurso(supervisor_id, curso_id):
                     flash('Serie asignada con éxito', 'success')
                     grupos = Grupo.query.filter_by(id_curso=curso_actual.id).all()
                     series = Serie.query.all()
-                    return redirect(url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
+                    return redirect(url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
             except Exception as e:
                 current_app.logger.error(f'Ocurrió un error al agregar el ejercicio: {str(e)}')
                 db.session.rollback()
                 flash('Error al asignar la serie', 'danger')
-                return redirect(url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))    
+                return redirect(url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))    
         elif 'eliminar' in request.form:
             try:
                 current_app.logger.info(f'Eliminando el curso {curso_actual.nombre}...')
@@ -543,16 +543,16 @@ def detallesCurso(supervisor_id, curso_id):
 
                 db.session.commit()
                 current_app.logger.info(f'Curso eliminado correctamente.')
-                return redirect(url_for('dashDocente', supervisor_id=supervisor_id))
+                return redirect(url_for('supervisor.dashDocente', supervisor_id=supervisor_id))
             except Exception as e:
                 # Manejar errores y realizar rollback en caso de error
                 current_app.logger.error(f'Ocurrió un error al eliminar el curso: {str(e)}')
                 db.session.rollback()
                 flash('Ocurrió un error al eliminar el curso.', 'danger')
-                return redirect(url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
+                return redirect(url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
         else:
             current_app.logger.error(f'Acción no reconocida: {request.form}')
-            return redirect(url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
+            return redirect(url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
     return render_template('detallesCurso.html', supervisor_id=supervisor_id, curso=curso_actual, grupos=grupos, series_asignadas=series_asignadas, estudiantes_curso=estudiantes_curso, series=series)
 
 
@@ -567,7 +567,7 @@ def asignarGrupos(supervisor_id, curso_id):
 
     if not cursos:
         flash('No existen cursos, por favor crear un curso', 'danger')
-        return redirect(url_for('dashDocente', supervisor_id=supervisor_id))
+        return redirect(url_for('supervisor.dashDocente', supervisor_id=supervisor_id))
     
     estudiantes_curso = Estudiante.query.filter(Estudiante.cursos.any(id=curso_id)).all()
     if request.method == 'POST':
@@ -575,7 +575,7 @@ def asignarGrupos(supervisor_id, curso_id):
         if accion == 'seleccionarCurso':
             id_curso_seleccionado = request.form['curso']
             flash('se cambio el curso a {curso_id}', 'success')
-            return redirect(url_for('asignarGrupos', supervisor_id=supervisor_id, curso_id=id_curso_seleccionado))
+            return redirect(url_for('supervisor.asignarGrupos', supervisor_id=supervisor_id, curso_id=id_curso_seleccionado))
 
         elif accion == 'seleccionarEstudiantes':
             # Recibir los estudiantes seleccionados
@@ -586,7 +586,7 @@ def asignarGrupos(supervisor_id, curso_id):
             id_curso_seleccionado = request.form['curso_seleccionado']
             if not nombre_grupo or not estudiantes_seleccionados_ids or not id_curso_seleccionado :
                 flash('Por favor, complete todos los campos.', 'danger')
-                return redirect(url_for('asignarGrupos', supervisor_id=supervisor_id, curso_id=id_curso_seleccionado))
+                return redirect(url_for('supervisor.asignarGrupos', supervisor_id=supervisor_id, curso_id=id_curso_seleccionado))
 
             try:
                 # Verificar si el grupo ya existe
@@ -652,23 +652,23 @@ def detallesGrupo(supervisor_id, curso_id, grupo_id):
                 db.session.delete(grupo)
                 db.session.commit()
                 current_app.logger.info(f'Grupo eliminado correctamente.')
-                return redirect(url_for('detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
+                return redirect(url_for('supervisor.detallesCurso', supervisor_id=supervisor_id, curso_id=curso_id))
             except Exception as e:
                 current_app.logger.error(f'Ocurrió un error al eliminar el grupo: {str(e)}')
                 db.session.rollback()
                 flash('Ocurrió un error al eliminar el grupo.', 'danger')
-                return redirect(url_for('detallesGrupo', supervisor_id=supervisor_id, curso_id=curso_id, grupo_id=grupo_id))
+                return redirect(url_for('supervisor.detallesGrupo', supervisor_id=supervisor_id, curso_id=curso_id, grupo_id=grupo_id))
         elif 'renombrar' in request.form:
             current_app.logger.info(f'Recibiendo formulario para renombrar el grupo...')
             try:
                 current_app.logger.info(f'Renombrando el grupo {grupo.nombre}...')
                 grupo.nombre = request.form.get('nuevo_nombre')
                 db.session.commit()
-                return redirect(url_for('detallesGrupo', supervisor_id=supervisor_id, curso_id=curso_id, grupo_id=grupo_id))
+                return redirect(url_for('supervisor.detallesGrupo', supervisor_id=supervisor_id, curso_id=curso_id, grupo_id=grupo_id))
             except Exception as e:
                 current_app.logger.error(f'Ocurrió un error al renombrar el grupo: {str(e)}')
                 db.session.rollback()
-                return redirect(url_for('detallesGrupo', supervisor_id=supervisor_id, curso_id=curso_id, grupo_id=grupo_id))
+                return redirect(url_for('supervisor.detallesGrupo', supervisor_id=supervisor_id, curso_id=curso_id, grupo_id=grupo_id))
         else :
             current_app.logger.error(f'Acción no reconocida: {request.form}')
     grupo=Grupo.query.get(grupo_id)

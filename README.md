@@ -19,43 +19,54 @@ Important: There seems to be a problem with path management under Windows, so I 
 
 # Escenarios de prueba implementados (Behave)
 
-A continuación se describen los escenarios implementados con Behave para validar el correcto funcionamiento del registro y login de supervisores. Cada escenario está alineado con historias de usuario reales y contempla tanto casos positivos como negativos.
+A continuación se describen los features implementadas con Behave para validar su correcto funcionamiento. Cada escenario está alineado con historias de usuario reales y contempla tanto casos positivos como negativos.
+
+---
+###  `feature 1: login`
+
+**Escenario:** Inicio de sesión del supervisor y estudiante.  
+**Descripción:** Este escenario comprueba que el supervisor y estudiante pueda iniciar sesión con sus credenciales correctas y sea redirigido a su dashboard correspondiente. También incluye casos negativos (credenciales incorrectas).  
+**Resultado esperado:**  
+- Éxito: Redirección a `/dashDocente` o `/dashEstudiante`  
+- Fallo: Permanencia en `/login` 
+**Archivo de pasos:** `steps_login.py`
 
 ---
 
-### `feature: Registro (exitoso)`
+### `feature 2: Subida de archivos `
 
-**Escenario:** Registro exitoso de un supervisor  
+**Escenario:** Subida de ejercicios java por el estudiante y csv .
 **Descripción:**  
-Este escenario verifica que un nuevo supervisor pueda registrarse exitosamente cuando se ingresan todos los campos requeridos con un formato correcto.  
+Este escenario verifica que el estudiante pueda subir archivos java y estos sean verificados correctamente, ademas, verifica la subida de archivos csv por el supervisor, y que el registro de los estudiantes respectivos sea exitosa.  
 **Resultado esperado:**  
-El usuario es redirigido a la página de login (`/login`) luego de completar el formulario.  
+El archivo correspondiente es subido a la plataforma y retorna un estado 200.
+**Archivo de pasos:** `steps_file_uploads.py`
+
+---
+
+### `feature 3: Registro de supervisores`
+
+**Escenario:** Registro de un nuevo supervisor  
+**Descripción:**  
+Este escenario verifica que un nuevo supervisor pueda registrarse correctamente cuando se ingresan todos los campos requeridos con un formato valido, incluye pruebas invalidas.  
+**Resultado esperado:**  
+- Éxito: El usuario es registrado en la base de datos y es redirigido a la página de login (`/login`) luego de completar el formulario.  
+- Fallo: El usuario no se registra y se notifica al usuario mediante un pop-up que el valor ingresado es invalido 
 **Archivo de pasos:** `steps_register.py`
 
 ---
 
-###  `feature: Registro (mal formateado)`
+###  `feature 4: Edicion de contraseña`
 
-**Escenario:** Registro fallido con datos mal formateados o incompletos  
+**Escenario:** Cambio de contraseña por el supervisor o estudiante 
 **Descripción:**  
-Se evalúa que el sistema impida el registro si falta algún campo obligatorio (nombre, apellido, correo o contraseña) o si estos no están bien formateados.  
+Se evalua que el sistema permita la modificacion de la contraseña de la cuenta, y si estan bien formateadas, dando un resultado exitoso o fallido.
 **Resultado esperado:**  
-El usuario permanece en la misma página (`/registersupervisor`) y se muestra un mensaje de error como `"Todos los campos son requeridos."`.  
-**Archivo de pasos:** `steps_register_error.py`
+El usuario permanece en la misma página (`/cuentaDocente` o `/cuentaEstudiante`) y se actualiza la contraseña en la base de datos.  
+**Archivo de pasos:** `steps_modify.py`
 
 ---
 
-###  `feature: login`
-
-**Escenario:** Inicio de sesión del supervisor  
-**Descripción:**  
-Este escenario comprueba que el supervisor pueda iniciar sesión con sus credenciales correctas y sea redirigido a su dashboard. También incluye casos negativos (credenciales incorrectas).  
-**Resultado esperado:**  
-- Éxito: Redirección a `/dashDocente`  
-- Fallo: Permanencia en `/login` con mensaje de error  
-**Archivo de pasos:** `steps_login.py`
-
----
 
 ### Configuración base
 

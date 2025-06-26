@@ -23,8 +23,29 @@ def step_impl(context, nombre, apellido, correo, contrasena):
 @then('debería ser redirigido a la página de inicio de sesión')
 def step_impl(context):
     final_url = context.response.url
-    print(">>> Status code:", context.response.status_code)
-    print(">>> Final URL:", context.response.url)
-    print(">>> Headers:", context.response.headers)
-    print(">>> Body:", context.response.text)
     assert 'http://localhost:3000/login' in final_url
+
+@when('ingreso nombre "{nombre}" apellido "{apellido}" correo "{correo}" y contraseña "{contrasena}" por error')
+def step_impl(context, nombre, apellido, correo, contrasena):
+    url = urljoin(context.base_url, '/registersupervisor')
+    if nombre == "<vacio>":
+        nombre = ""
+    if apellido == "<vacio>":
+        apellido = ""
+    if correo == "<vacio>":
+        correo = ""
+    if contrasena == "<vacio>":
+        contrasena = ""
+    data = {
+        'nombres': nombre,
+        'apellidos': apellido,
+        'correo': correo,
+        'password': contrasena
+    }
+    response = requests.post(url, data=data, allow_redirects=True)
+    context.response = response
+
+@then('aparece un mensaje de error')
+def step_impl(context):
+    body = context.response.text
+    assert 'Todos los campos son requeridos.' in body

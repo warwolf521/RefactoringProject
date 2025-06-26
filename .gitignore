@@ -2,7 +2,4 @@ __pycache__/
 *.py[cod]
 errores.log
 instance/
-ejerciciosEstudiantes/
-ejerciciosPropuestos/
-enunciadosEjercicios/
 venv/

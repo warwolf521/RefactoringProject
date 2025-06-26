@@ -1,5 +1,5 @@
 import markdown
-import datetime
+from datetime import datetime
 import os
 import json
 from flask import Blueprint,request,flash, render_template,url_for,redirect, current_app
