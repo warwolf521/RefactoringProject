@@ -58,7 +58,7 @@ dictConfig({
 })
 
 
-#inicializar la aplicacion
+# inicializar la aplicacion
 app = Flask(__name__)
 init_app(app)
 app.config['SECRET_KEY'] = 'secret-key-goes-here'
@@ -70,8 +70,9 @@ login_manager.login_view = 'login.login'  # Nombre de la vista para iniciar sesi
 
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=120)
 
-UPLOAD_FOLDER = 'uploads' #Ruta donde se guardan los archivos subidos para los ejercicios
-ALLOWED_EXTENSIONS = {'md','xml','csv','png','jpg', 'jpeg'}
+# Ruta donde se guardan los archivos subidos para los ejercicios
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'md', 'xml', 'csv', 'png', 'jpg', 'jpeg'}
 
 # Encuentra la ruta del directorio del archivo actual
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -81,6 +82,7 @@ UPLOAD_FOLDER = os.path.join(current_directory, "uploads")
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Blueprints rutas
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -93,21 +95,25 @@ def load_user(user_id):
 
     return user
 
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     return render_template('inicio.html')
+
 
 app.register_blueprint(supervisor_bp)
 app.register_blueprint(estudiante_bp)
 app.register_blueprint(login_bp)
 
-#Funcion para ejecutar el script 404
+
+# Funcion para ejecutar el script 404
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
-    #return redirect(url_for('index')) #te devuelve a esa página
+    # return redirect(url_for('index')) #te devuelve a esa página
 
-#Ruta para ejecutar el script
+
+# Ruta para ejecutar el script
 if __name__ == '__main__':
-    #app.register_error_handler(404, pagina_no_encontrada)
-    app.run(host='0.0.0.0',debug=True, port=3000)
-    debug=True
+    # app.register_error_handler(404, pagina_no_encontrada)
+    app.run(host='0.0.0.0', debug=True, port=3000)
+    debug = True

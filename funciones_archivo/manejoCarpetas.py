@@ -1,5 +1,6 @@
 import os, shutil
 
+
 def agregarCarpetaEjercicioEstudiante(rutaSerie, ejercicio_id, ejercicio_path):
 
     # Validar parámetros
@@ -17,6 +18,7 @@ def agregarCarpetaEjercicioEstudiante(rutaSerie, ejercicio_id, ejercicio_path):
 
     return rutaEjercicioEstudiante
 
+
 def agregarCarpetaSerieEstudiante(rutaArchivador, serie_id):
     try:
         rutaSerieEstudiante = os.path.join(rutaArchivador, f"Serie_{serie_id}")
@@ -27,6 +29,7 @@ def agregarCarpetaSerieEstudiante(rutaArchivador, serie_id):
             return rutaSerieEstudiante
     except Exception as e:
         return f"Hubo un error al agregar la carpeta de la serie: {str(e)}"
+
 
 def crearArchivadorEstudiante(matricula):
     # Función para crear la carpeta del estudiante con la matrícula para guardar sus archivos
@@ -61,19 +64,18 @@ def crearCarpetaEjercicio(id_ejercicio, id_serie):
 def crearCarpetaSerie(id_serie):
     # Crea una carpeta para una serie específica
     rutaBase = "ejerciciosPropuestos/"
-    rutaEnunciados= "enunciadosEjercicios/"
-    nombreCarpetaEnunciados= f"Serie_{id_serie}"
+    rutaEnunciados = "enunciadosEjercicios/"
+    nombreCarpetaEnunciados = f"Serie_{id_serie}"
 
     # Crear la carpeta con el formato id_nombreSerie
     nombre_carpeta = f"Serie_{id_serie}"
     rutaSerie = os.path.join(rutaBase, nombre_carpeta)
-    rutaFinalEnunciado= os.path.join(rutaEnunciados, nombreCarpetaEnunciados)
-
+    rutaFinalEnunciado = os.path.join(rutaEnunciados, nombreCarpetaEnunciados)
 
     if not os.path.exists(rutaFinalEnunciado) or os.path.exists(rutaSerie):
         os.makedirs(rutaFinalEnunciado)
         os.makedirs(rutaSerie)
     else:
         return "La carpeta ya existe"
-    
+
     return rutaSerie

@@ -15,22 +15,29 @@ def procesar_archivo_csv(filename, curso_id, app, db):
         next(reader)  # Saltar la primera fila
         for row in reader:
             if len(row) != 5:
-                # Manejar el error, por ejemplo, omitiendo esta fila o mostrando un mensaje de advertencia
-                current_app.logger.warning(f"La fila no tiene el formato esperado: {row}")
+                # Manejar el error, por ejemplo, 
+                # omitiendo esta fila o mostrando un mensaje de advertencia
+                current_app.logger.warning(
+                    f"La fila no tiene el formato esperado: {row}")
                 continue  # Saltar esta fila y continuar con la próxima
-            
+
             # Por cada fila, extraer los datos
             matricula, apellidos, nombres, correo, carrera = row
-            password = generate_password_hash(matricula)  # Contraseña por defecto: hash de la matrícula
+
+            # Contraseña por defecto: hash de la matrícula
+            password = generate_password_hash(matricula)
+
             # Verificar si el estudiante ya existe en la base de datos:
             estudiante_existente = Estudiante.query.filter_by(matricula=matricula).first()
-            
+
             if estudiante_existente:
                 # El estudiante con el mismo correo ya existe
-                #flash(f'El estudiante con matrícula {matricula} ya está registrado en la base de datos.', 'warning')
+                # flash(f'El estudiante con matrícula {matricula} ya está registrado en la base de datos.', 'warning')
                 # Revisar si el estudiante ya está asignado a curso_id
                 # Usando tabla de inscripciones
-                relacion_existente = db.session.query(inscripciones).filter_by(id_estudiante=estudiante_existente.id, id_curso=curso_id).first()
+                relacion_existente = db.session.query(inscripciones).filter_by(
+                    id_estudiante=estudiante_existente.id, id_curso=curso_id).first()
+
                 if relacion_existente:
                     flash(f'El estudiante con matrícula {matricula} ya está inscrito en el curso {curso_id}.', 'warning')
                     continue
@@ -40,21 +47,22 @@ def procesar_archivo_csv(filename, curso_id, app, db):
                     db.session.execute(nueva_inscripcion)
                     db.session.commit()
                     flash(f'El estudiante con matrícula {matricula} ha sido inscrito en el curso.', 'success')
-                except IntegrityError as e:
+
+                except IntegrityError:
                     db.session.rollback()
                     flash(f'Error al registrar en el curso {curso_id} al estudiante {matricula} .', 'warning')
                     continue
-            
+
             # Si el estudiantes no existe, se crea
             elif not estudiante_existente:
 
                 estudiante = Estudiante(
-                matricula=matricula,
-                apellidos=apellidos,
-                nombres=nombres,
-                correo=correo,
-                password=password,
-                carrera=carrera)
+                    matricula=matricula,
+                    apellidos=apellidos,
+                    nombres=nombres,
+                    correo=correo,
+                    password=password,
+                    carrera=carrera)
                 # Crear el nuevo estudiante en la base de datos
                 try:
                     db.session.add(estudiante)
@@ -62,7 +70,7 @@ def procesar_archivo_csv(filename, curso_id, app, db):
                     estudiante_id = estudiante.id  # Obtener el id del estudiante recién creado
                     db.session.commit()
                     flash(f'El estudiante con matrícula {matricula} ha sido registrado en la base de datos.', 'success')
-                except Exception as e:
+                except Exception:
                     db.session.rollback()
                     flash(f'Error al crear al registrar {nombres} {apellidos} .', 'warning')
                     continue
@@ -73,10 +81,11 @@ def procesar_archivo_csv(filename, curso_id, app, db):
                     db.session.execute(nueva_inscripcion)
                     db.session.commit()
                     flash(f'El estudiante con matrícula {matricula} ha sido inscrito en el curso.', 'success')
-                except Exception as e:
+                except Exception:
                     db.session.rollback()
                     flash(f'Error al inscribir a {nombres} {apellidos} en el curso.', 'warning')
                     continue
+
 
 def calcular_calificacion(total_puntos, puntos_obtenidos):
     if total_puntos == 0:
@@ -101,7 +110,7 @@ def calcular_calificacion(total_puntos, puntos_obtenidos):
 
 # Verifica que el usuario logueado es un Supervisor
 def verify_supervisor(supervisor_id):
-    
+
     if not isinstance(current_user, Supervisor):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Supervisor.', 'danger')
         return False
@@ -113,9 +122,10 @@ def verify_supervisor(supervisor_id):
 
     return True
 
+
 # Verifica que el usuario logueado es un Estudiante
 def verify_estudiante(estudiante_id):
-    
+
     if not isinstance(current_user, Estudiante):
         flash('No tienes permiso para acceder a este dashboard. Debes ser un Estudiante.', 'danger')
         return False
@@ -125,6 +135,7 @@ def verify_estudiante(estudiante_id):
         return False
     return True
 
+
 def verify_ayudante(supervisor_id):
 
     if not isinstance(current_user, Supervisor):
@@ -133,6 +144,7 @@ def verify_ayudante(supervisor_id):
     if current_user.id != supervisor_id:
         flash('No tienes permiso para acceder a este dashboard.', 'danger')
         return False
+
 
 # Se define que tipo de arhivos se pueden recibir
 def allowed_file(filename, allowed_extensions):
