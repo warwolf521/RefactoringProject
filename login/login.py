@@ -1,4 +1,4 @@
-from flask import Flask,Blueprint, request,flash,redirect,url_for,render_template
+from flask import Blueprint, request,flash,redirect,url_for,render_template
 from flask_login import login_user, logout_user,login_required
 from basedatos.modelos import Supervisor, Estudiante
 from werkzeug.security import check_password_hash

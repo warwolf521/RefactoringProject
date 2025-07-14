@@ -1,26 +1,10 @@
 from datetime import datetime, timedelta
-import os, shutil
-from sqlite3 import IntegrityError
-from click import DateTime
-from flask import Flask, make_response, render_template, request, url_for, redirect, jsonify, session, flash, current_app
-from flask_login import LoginManager, login_required
-from flask_sqlalchemy import SQLAlchemy
-from wtforms import FileField, SubmitField, PasswordField, StringField, DateField, BooleanField, validators, FileField
-from werkzeug.utils import secure_filename
-from wtforms.validators import InputRequired, Length, ValidationError
-from funciones_archivo.manejoArchivosJava import eliminarPackages, agregarPackage
-from funciones_archivo.manejoCarpetas import agregarCarpetaSerieEstudiante,crearCarpetaSerie, crearCarpetaEjercicio, crearArchivadorEstudiante, agregarCarpetaEjercicioEstudiante
-from funciones_archivo.manejoMaven import ejecutarTestUnitario
-from werkzeug.security import check_password_hash, generate_password_hash, check_password_hash
+import os
+from flask import Flask, make_response, render_template
+from flask_login import LoginManager
 from DBManager import db, init_app
-from basedatos.modelos import Supervisor, Grupo, Serie, Estudiante, Ejercicio, Ejercicio_asignado, Curso, serie_asignada, inscripciones, estudiantes_grupos, supervisores_grupos
-from pathlib import Path
-import markdown
-import csv
-import logging
-from logging.config import dictConfig
-from ansi2html import Ansi2HTMLConverter
-import json
+from basedatos.modelos import Supervisor, Estudiante
+from logging.config import dictConfig 
 from login.login import login_bp
 from supervisor.supervisor import supervisor_bp
 from estudiante.estudiante import estudiante_bp

@@ -1,4 +1,4 @@
-import re, os, subprocess
+import re, subprocess
 from ansi2html import Ansi2HTMLConverter
 from bs4 import BeautifulSoup
 
