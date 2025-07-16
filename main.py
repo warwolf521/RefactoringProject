@@ -93,4 +93,4 @@ def pagina_no_encontrada(error):
 # Ruta para ejecutar el script
 if __name__ == '__main__':
     debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
-    app.run(host='127.0.0.1', debug=debug_mode, port=3000)
+    app.run(host='0.0.0.0', debug=debug_mode, port=3000)
