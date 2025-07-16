@@ -4,8 +4,21 @@ from bs4 import BeautifulSoup
 
 
 def ejecutarTestUnitario(rutaEjercicioEstudiante):
+    if not isinstance(rutaEjercicioEstudiante, str):
+        raise ValueError("Invalid path provided.")
+
     comando = ['mvn', 'clean', 'test']
-    resultado = subprocess.run(comando, cwd=rutaEjercicioEstudiante, capture_output=True, text=True)
+
+    try:
+        resultado = subprocess.run(
+            comando,
+            cwd=rutaEjercicioEstudiante,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+    except subprocess.CalledProcessError as e:
+        return f"Error executing Maven command: {e}"
 
     patron_success = re.compile(r'BUILD SUCCESS', re.DOTALL)
     patron_failures = re.compile(r'Results:(.+?)BUILD FAILURE', re.DOTALL)
@@ -31,10 +44,8 @@ def ejecutarTestUnitario(rutaEjercicioEstudiante):
             errores_negrita = agregar_negrita(errores_sin_error_tag)
             return errores_negrita
         else:
-
             if patron_comp.search(resultado.stdout):
                 coincidencias = patron_compile.search(resultado.stdout)
-
                 if coincidencias:
                     lineas_test = coincidencias.group(1).split('\n')
                     converter = Ansi2HTMLConverter()
@@ -50,7 +61,6 @@ def ejecutarTestUnitario(rutaEjercicioEstudiante):
 
             # Si no se cumplen ninguno de los patrones anteriores, retorna el mensaje de error
             return "Error al ejecutar pruebas unitarias"
-
 
 def eliminar_error(html_lines):
     # Crear una lista para almacenar las líneas después de eliminar [ERROR]
@@ -72,7 +82,6 @@ def eliminar_error(html_lines):
         lines_sin_error.append(linea_modificada)
 
     return lines_sin_error
-
 
 def agregar_negrita(html_lines):
     # Crear una lista para almacenar las líneas después de agregar negrita

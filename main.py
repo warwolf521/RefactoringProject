@@ -1,16 +1,13 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import os
-from flask import Flask, make_response, render_template
+from flask import Flask, render_template
 from flask_login import LoginManager
 from DBManager import db, init_app
 from basedatos.modelos import Supervisor, Estudiante
-from logging.config import dictConfig 
+from logging.config import dictConfig
 from login.login import login_bp
 from supervisor.supervisor import supervisor_bp
 from estudiante.estudiante import estudiante_bp
-
-from utility import procesar_archivo_csv, calcular_calificacion, verify_supervisor, verify_ayudante, verify_estudiante
-
 
 dictConfig({
     'version': 1,
@@ -45,8 +42,7 @@ dictConfig({
 # inicializar la aplicacion
 app = Flask(__name__)
 init_app(app)
-app.config['SECRET_KEY'] = 'secret-key-goes-here'
-
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-secret-key')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -89,15 +85,12 @@ app.register_blueprint(supervisor_bp)
 app.register_blueprint(estudiante_bp)
 app.register_blueprint(login_bp)
 
-
 # Funcion para ejecutar el script 404
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
     # return redirect(url_for('index')) #te devuelve a esa página
 
-
 # Ruta para ejecutar el script
 if __name__ == '__main__':
-    # app.register_error_handler(404, pagina_no_encontrada)
-    app.run(host='0.0.0.0', debug=True, port=3000)
-    debug = True
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(host='127.0.0.1', debug=debug_mode, port=3000)
