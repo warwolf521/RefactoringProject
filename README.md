@@ -74,3 +74,31 @@ El usuario permanece en la misma página (`/cuentaDocente` o `/cuentaEstudiante`
 Define la URL base donde se ejecuta la aplicación para los tests:
 ```python
 context.base_url = "http://localhost:3000"
+```
+
+---
+
+### Ejecucion con Docker
+
+Para compilar y ejecutar la aplicación utilizando Docker, sigue estos pasos:
+
+1. Asegúrate de tener Docker instalado en tu máquina. Puedes descargarlo desde [aquí](https://www.docker.com/get-started).
+
+2. Abre una terminal y navega hasta el directorio del proyecto.
+
+3. Compila la imagen de Docker utilizando el siguiente comando:
+   ```
+   docker build -t nombre_de_la_imagen .
+   ```
+   Reemplaza `nombre_de_la_imagen` con el nombre que desees para tu imagen.
+
+4. Una vez que la imagen se haya construido correctamente, ejecuta un contenedor a partir de la imagen con el siguiente comando:
+   ```
+   docker run -p 3000:3000 nombre_de_la_imagen
+   ```
+   Esto mapeará el puerto 3000 del contenedor al puerto 3000 de tu máquina local.
+
+5. Accede a la aplicación en tu navegador en la siguiente URL:
+   ```
+   http://localhost:3000
+   ```
