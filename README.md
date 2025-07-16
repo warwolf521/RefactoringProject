@@ -102,3 +102,65 @@ Para compilar y ejecutar la aplicación utilizando Docker, sigue estos pasos:
    ```
    http://localhost:3000
    ```
+
+### Análisis Estático
+Se aplicaron tres herramientas para mejorar la calidad y seguridad del código del sistema:
+---
+1. Vulture
+Objetivo: Detectar código no utilizado (funciones, variables, imports).
+
+Resultados:
+
+Se detectaron múltiples importaciones y funciones marcadas como no utilizadas.
+
+Se eliminaron solo aquellas con confianza ≥ 90% luego de revisión manual.
+
+Las funciones marcadas como no usadas en supervisor.py y estudiante.py eran rutas del sistema, por lo que no se eliminaron.
+
+Conclusión: Vulture genera falsos positivos y requiere validación manual antes de eliminar.
+---
+2. Flake8
+Objetivo: Verificar el cumplimiento de buenas prácticas de estilo en Python (PEP8).
+
+Resultados:
+
+La mayoría de los errores fueron de estilo (espaciado, saltos de línea, longitud de línea).
+
+Se corrigieron errores leves como:
+
+Espacios innecesarios alrededor de operadores.
+
+Saltos de línea al final del archivo.
+
+Longitud de línea excedida.
+
+Conclusión: Se mejoró la legibilidad y se reforzó el cumplimiento de estándares Python.
+---
+3. Bandit
+Objetivo: Analizar posibles vulnerabilidades de seguridad en el código.
+
+Resultados:
+
+El análisis no arrojó vulnerabilidades críticas.
+
+Se identificaron buenas prácticas como:
+
+Uso de check_password_hash() en vez de contraseñas planas.
+
+Uso de SECRET_KEY para sesiones.
+
+Algunas advertencias estaban relacionadas a configuraciones por defecto y no eran explotables en el entorno actual.
+
+Conclusión: El sistema es seguro para su contexto académico, pero debe revisarse si se despliega en producción.
+---
+Este proyecto fue desarrollado por:
+
+Bastián Sánchez
+
+Lucas Escalona
+
+Martín Garcés
+
+Cristóbal Muñoz
+
+Estudiantes de Ingeniería Civil Informática – Universidad de Concepción
